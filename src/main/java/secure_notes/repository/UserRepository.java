@@ -51,5 +51,21 @@ public class UserRepository {
         return null;
     }
 
+    public boolean updatePassword(int userId, String newHashedPassword) throws SQLException {
+        String sql = "UPDATE users SET password = ? WHERE id = ?";
 
+        try(Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, newHashedPassword);
+        stmt.setInt(2, userId);
+
+        return stmt.executeUpdate() > 0;
+
+    } catch (SQLException e) {
+            System.out.println("Couldn't update password");
+            return false;
+        }
+
+    }
 }

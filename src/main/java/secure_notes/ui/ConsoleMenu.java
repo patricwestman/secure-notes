@@ -74,7 +74,8 @@ public class ConsoleMenu {
             System.out.println("\n=== User Menu ===");
             System.out.println("1. Create note");
             System.out.println("2. Show notes");
-            System.out.println("3. Log out");
+            System.out.println("3. Change password");
+            System.out.println("4. Log out");
             System.out.println("Choose:");
 
             String choice = scanner.nextLine();
@@ -82,7 +83,14 @@ public class ConsoleMenu {
             switch (choice) {
                 case "1" -> createdNote(user);
                 case "2" -> showNotes(user);
-                case "3" -> loggedIn = false;
+                case "3" -> {
+                    boolean passwordChanged = changePassword(user);
+
+                    if (passwordChanged) {
+                        loggedIn = false;
+                    }
+                }
+                case "4" -> loggedIn = false;
                 default -> System.out.println("Invalid choice");
             }
         }
@@ -102,17 +110,35 @@ public class ConsoleMenu {
     private void showNotes(User user) throws SQLException {
         List<Note> notes = noteService.getNotesForUser(user.getId());
 
-        if(notes.isEmpty()) {
+        if (notes.isEmpty()) {
             System.out.println("You don't have any notes yet!");
             return;
         }
         System.out.println("\n=== My notes ===");
 
-        for(Note note : notes) {
+        for (Note note : notes) {
             System.out.println("--------------------");
             System.out.println("ID: " + note.getId());
             System.out.println("Title: " + note.getTitle());
             System.out.println("Content: " + note.getContent());
         }
     }
-}
+    private boolean changePassword(User user)  throws SQLException {
+        System.out.println("Enter your current password: ");
+        String oldPassword = scanner.nextLine();
+
+        System.out.println("Enter new password: ");
+        String newPassword = scanner.nextLine();
+
+        boolean success = authService.changePassword(user, oldPassword, newPassword);
+
+        if(success) {
+            System.out.println("Password changed successfully!");
+            System.out.println("You have been logged out. Please log in again.");
+            return true;
+        } else  {
+            System.out.println("Password change failed! Please try again.");
+            return false;
+        }
+        }
+    }

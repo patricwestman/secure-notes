@@ -32,4 +32,13 @@ public class AuthService {
         return null;
     }
 
+    public boolean changePassword(User user, String oldPassword, String newPassword) throws SQLException {
+        if (!BCrypt.checkpw(oldPassword, user.getPassword())) {
+            return false;
+        }
+
+        String newHashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+        return userRepository.updatePassword(user.getId(), newHashedPassword);
+    }
+
 }
