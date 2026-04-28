@@ -35,6 +35,7 @@ public class ConsoleMenu {
 
         }
     }
+
     private void register() throws SQLException {
         System.out.println("Username: ");
         String username = scanner.nextLine();
@@ -44,9 +45,9 @@ public class ConsoleMenu {
 
         boolean success = authService.register(username, password);
 
-        if(success) {
+        if (success) {
             System.out.println("Account created successfully!");
-        } else  {
+        } else {
             System.out.println("No account created.");
         }
     }
@@ -60,13 +61,14 @@ public class ConsoleMenu {
 
         User user = authService.login(username, password);
 
-        if(user != null) {
+        if (user != null) {
             System.out.println("Logged in as " + user.getUsername());
             userMenu(user);
         } else {
             System.out.println("Wrong username or password! Please try again.");
         }
     }
+
     private void userMenu(User user) throws SQLException {
         boolean loggedIn = true;
 
@@ -74,8 +76,9 @@ public class ConsoleMenu {
             System.out.println("\n=== User Menu ===");
             System.out.println("1. Create note");
             System.out.println("2. Show notes");
-            System.out.println("3. Change password");
-            System.out.println("4. Log out");
+            System.out.println("3. Delete note");
+            System.out.println("4. Change password");
+            System.out.println("5. Log out");
             System.out.println("Choose:");
 
             String choice = scanner.nextLine();
@@ -83,14 +86,15 @@ public class ConsoleMenu {
             switch (choice) {
                 case "1" -> createdNote(user);
                 case "2" -> showNotes(user);
-                case "3" -> {
+                case "3" -> deleteOwnNote(user);
+                case "4" -> {
                     boolean passwordChanged = changePassword(user);
 
                     if (passwordChanged) {
                         loggedIn = false;
                     }
                 }
-                case "4" -> loggedIn = false;
+                case "5" -> loggedIn = false;
                 default -> System.out.println("Invalid choice");
             }
         }
@@ -123,7 +127,8 @@ public class ConsoleMenu {
             System.out.println("Content: " + note.getContent());
         }
     }
-    private boolean changePassword(User user)  throws SQLException {
+
+    private boolean changePassword(User user) throws SQLException {
         System.out.println("Enter your current password: ");
         String oldPassword = scanner.nextLine();
 
@@ -132,13 +137,35 @@ public class ConsoleMenu {
 
         boolean success = authService.changePassword(user, oldPassword, newPassword);
 
-        if(success) {
+        if (success) {
             System.out.println("Password changed successfully!");
             System.out.println("You have been logged out. Please log in again.");
             return true;
-        } else  {
+        } else {
             System.out.println("Password change failed! Please try again.");
             return false;
         }
+    }
+
+    private void deleteOwnNote(User user) {
+
+        System.out.println("Which note would you like to delete? (enter note id): ");
+        String deleteOwnNote = scanner.nextLine();
+
+        try {
+            int noteId = Integer.parseInt(deleteOwnNote);
+
+            boolean deleted = noteService.deleteOwnNote(noteId, user.getId());
+
+            if(deleted) {
+                System.out.println("Note deleted successfully!");
+            } else  {
+                System.out.println("Note could not be deleted! Make sure note ID is correct and try again.");
+            }
+        } catch (NumberFormatException | SQLException e) {
+            System.out.println("Invalid note ID!");
+        }
+
         }
     }
+

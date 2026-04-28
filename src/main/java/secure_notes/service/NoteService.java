@@ -15,4 +15,8 @@ public class NoteService {
     public List<Note> getNotesForUser(int userId) throws SQLException {
         return noteRepository.findByUser(userId);
     }
+
+    public boolean deleteOwnNote(int noteId, int userId) throws SQLException {
+        return noteRepository.deleteOwnNote(noteId, userId);
+    }
 }
