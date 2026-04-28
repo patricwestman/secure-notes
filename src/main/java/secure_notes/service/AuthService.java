@@ -9,8 +9,13 @@ public class AuthService {
     private final UserRepository  userRepository =  new UserRepository();
 
     public boolean register(String username, String password) throws SQLException {
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        User existingUser = userRepository.findByUsername(username);
 
+        if(existingUser != null) {
+            System.out.println("Username already exists, please choose another one.");
+            return false;
+        }
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         return userRepository.save(username, hashedPassword);
     }
 

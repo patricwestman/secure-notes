@@ -6,12 +6,6 @@ import secure_notes.model.User;
 
 public class UserRepository {
 
-    // TODO
-    // Login Users
-    // Get user from db
-    // LAST Check if username already in use
-    // check if password is correct
-
     public boolean save(String username, String hashedPassword) throws SQLException {
         String sql = "INSERT INTO users (username, password, role) VALUES (?, ?, 'USER')";
 
