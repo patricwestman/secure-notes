@@ -149,13 +149,22 @@ public class ConsoleMenu {
         }
     }
 
-    private void deleteOwnNote(User user) {
+    private void deleteOwnNote(User user) throws SQLException {
+        showNotes(user);
 
         System.out.println("Which note would you like to delete? (Enter note id): ");
         String deleteOwnNote = scanner.nextLine();
 
         try {
             int noteId = Integer.parseInt(deleteOwnNote);
+
+            System.out.println("Are you sure you want to delete this note? (y/n): ");
+            String confirm = scanner.nextLine();
+
+            if(!confirm.equalsIgnoreCase("y")) {
+                System.out.println("Operation aborted!");
+                return;
+            }
 
             boolean deleted = noteService.deleteOwnNote(noteId, user.getId());
 
@@ -183,7 +192,7 @@ public class ConsoleMenu {
                 String confirmEdit = scanner.nextLine();
 
                 if(!confirmEdit.equalsIgnoreCase("y")) {
-                    System.out.println("Edit cancelled");
+                    System.out.println("Operation aborted!");
                     return;
                 }
 
