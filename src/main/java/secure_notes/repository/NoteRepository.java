@@ -77,4 +77,26 @@ public class NoteRepository {
                 return stmt.executeUpdate() > 0;
             }
         }
+
+        public List<Note> findAllNotes() throws SQLException {
+            List<Note> notes = new ArrayList<>();
+
+            String sql = "SELECT * FROM notes";
+            try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    notes.add(new Note(
+                            rs.getInt("id"),
+                            rs.getString("title"),
+                            rs.getString("content"),
+                            rs.getInt("user_id")
+                    ));
+                }
+            } catch (SQLException e) {
+                System.out.println("Couldn't get all notes");
+            }
+            return notes;
+        }
     }

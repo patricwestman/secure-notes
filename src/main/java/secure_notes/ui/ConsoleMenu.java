@@ -63,9 +63,51 @@ public class ConsoleMenu {
 
         if (user != null) {
             System.out.println("Logged in as " + user.getUsername());
-            userMenu(user);
+
+            if (user.getRole().equalsIgnoreCase("ADMIN")) {
+                adminMenu(user);
+            } else  {
+                userMenu(user);
+            }
         } else {
             System.out.println("Wrong username or password! Please try again.");
+        }
+    }
+
+    private void adminMenu(User user) throws SQLException {
+        boolean loggedIn = true;
+
+        while (loggedIn) {
+            System.out.println("\n=== Admin Menu ===");
+            System.out.println("1. Create note");
+            System.out.println("2. Show notes");
+            System.out.println("3. Edit note");
+            System.out.println("4. Delete note");
+            System.out.println("5. Show all users notes");
+            System.out.println("6. Delete any user note");
+            System.out.println("7. Change password");
+            System.out.println("8. Log out");
+            System.out.println("Choose: ");
+
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1" -> createdNote(user);
+                case "2" -> showNotes(user);
+                case "3" -> editOwnNote(user);
+                case "4" -> deleteOwnNote(user);
+                case "5" -> showAllNotes();
+                case "6" -> deleteAnyNote();
+                case "7" -> {
+                    boolean passwordChanged = changePassword(user);
+
+                    if (passwordChanged) {
+                        loggedIn = false;
+                    }
+                }
+                case "8" -> loggedIn = false;
+                default -> System.out.println("Invalid choice");
+            }
         }
     }
 
@@ -100,6 +142,7 @@ public class ConsoleMenu {
                 default -> System.out.println("Invalid choice");
             }
         }
+
     }
 
     private void createdNote(User user) throws SQLException {
@@ -219,8 +262,56 @@ public class ConsoleMenu {
             } catch (SQLException e) {
                 System.out.println("Error while trying to edit note!");
             }
-
         }
 
+        private void showAllNotes() throws SQLException {
+            List<Note> notes = noteService.getAllNotes();
+
+            if(notes.isEmpty()) {
+                System.out.println("There are no notes in the system.");
+                return;
+            }
+
+            System.out.println("\n=== All notes ===");
+
+            for (Note note : notes) {
+                System.out.println("------------------------------");
+                System.out.println("ID: " + note.getId());
+                System.out.println("User ID: " + note.getUserId());
+                System.out.println("Title: " + note.getTitle());
+                System.out.println("Content: " + note.getContent());
+            }
+        }
+
+        private void deleteAnyNote() throws SQLException {
+            showAllNotes();
+
+            System.out.println("Which note would you like to delete? (Enter note id): ");
+            String deleteAnyNote = scanner.nextLine();
+
+            try {
+                int noteId = Integer.parseInt(deleteAnyNote);
+
+                System.out.println("Are you sure you want to delete this note? (y/n): ");
+                String confirm = scanner.nextLine();
+
+                if(!confirm.equalsIgnoreCase("y")) {
+                    System.out.println("Operation aborted!");
+                    return;
+                }
+
+                boolean deletedNote = noteService.deleteAnyNote(noteId);
+
+                if(deletedNote) {
+                    System.out.println("Note deleted successfully!");
+                } else {
+                    System.out.println("Note could not be deleted. Check if the note ID exists");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid note ID! Please enter a valid number.");
+            }
+        }
     }
+
+
 
