@@ -1,6 +1,7 @@
 package secure_notes.ui;
 import secure_notes.model.Note;
 import secure_notes.model.User;
+import secure_notes.model.Role;
 import secure_notes.service.AuthService;
 import secure_notes.service.NoteService;
 
@@ -64,7 +65,7 @@ public class ConsoleMenu {
         if (user != null) {
             System.out.println("Logged in as " + user.getUsername());
 
-            if (user.getRole().equalsIgnoreCase("ADMIN")) {
+            if (user.getRole() == Role.ADMIN) {
                 adminMenu(user);
             } else  {
                 userMenu(user);

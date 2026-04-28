@@ -3,6 +3,7 @@ import java.sql.*;
 
 import secure_notes.config.DatabaseConnection;
 import secure_notes.model.User;
+import secure_notes.model.Role;
 
 public class UserRepository {
 
@@ -41,12 +42,11 @@ public class UserRepository {
                         rs.getInt("id"),
                         rs.getString("username"),
                         rs.getString("password"),
-                        rs.getString("role")
+                        Role.valueOf(rs.getString("role"))
                 );
             }
         } catch (SQLException e) {
             System.out.println("Couldn't find user");
-            e.printStackTrace();
         }
         return null;
     }

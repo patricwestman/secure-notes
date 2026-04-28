@@ -1,14 +1,13 @@
 package secure_notes.model;
 
 public class User {
-
     private int id;
     private String username;
     private String password;
-    private String role;
+    private Role role;
 
 
-    public User(int id, String username, String password, String role) {
+    public User(int id, String username, String password, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -24,7 +23,7 @@ public class User {
     public String getPassword() {
         return password;
     }
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
