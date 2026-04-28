@@ -62,4 +62,19 @@ public class NoteRepository {
             return false;
         }
     }
-}
+
+        public boolean editOwnNote(int noteId, int userId, String newTitle, String newContent) throws SQLException {
+            String sql = "UPDATE notes SET title=?,content=? WHERE id=? AND user_id=?";
+
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setString(1, newTitle);
+                stmt.setString(2, newContent);
+                stmt.setInt(3, noteId);
+                stmt.setInt(4, userId);
+
+                return stmt.executeUpdate() > 0;
+            }
+        }
+    }

@@ -19,4 +19,8 @@ public class NoteService {
     public boolean deleteOwnNote(int noteId, int userId) throws SQLException {
         return noteRepository.deleteOwnNote(noteId, userId);
     }
+
+    public boolean editOwnNote(int noteId, String title, String content, int userId) throws SQLException {
+        return noteRepository.editOwnNote(noteId, userId, title, content);
+    }
 }

@@ -76,9 +76,10 @@ public class ConsoleMenu {
             System.out.println("\n=== User Menu ===");
             System.out.println("1. Create note");
             System.out.println("2. Show notes");
-            System.out.println("3. Delete note");
-            System.out.println("4. Change password");
-            System.out.println("5. Log out");
+            System.out.println("3. Edit note");
+            System.out.println("4. Delete note");
+            System.out.println("5. Change password");
+            System.out.println("6. Log out");
             System.out.println("Choose:");
 
             String choice = scanner.nextLine();
@@ -86,15 +87,16 @@ public class ConsoleMenu {
             switch (choice) {
                 case "1" -> createdNote(user);
                 case "2" -> showNotes(user);
-                case "3" -> deleteOwnNote(user);
-                case "4" -> {
+                case "3" -> editOwnNote(user);
+                case "4" -> deleteOwnNote(user);
+                case "5" -> {
                     boolean passwordChanged = changePassword(user);
 
                     if (passwordChanged) {
                         loggedIn = false;
                     }
                 }
-                case "5" -> loggedIn = false;
+                case "6" -> loggedIn = false;
                 default -> System.out.println("Invalid choice");
             }
         }
@@ -149,7 +151,7 @@ public class ConsoleMenu {
 
     private void deleteOwnNote(User user) {
 
-        System.out.println("Which note would you like to delete? (enter note id): ");
+        System.out.println("Which note would you like to delete? (Enter note id): ");
         String deleteOwnNote = scanner.nextLine();
 
         try {
@@ -157,15 +159,59 @@ public class ConsoleMenu {
 
             boolean deleted = noteService.deleteOwnNote(noteId, user.getId());
 
-            if(deleted) {
+            if (deleted) {
                 System.out.println("Note deleted successfully!");
-            } else  {
+            } else {
                 System.out.println("Note could not be deleted! Make sure note ID is correct and try again.");
             }
         } catch (NumberFormatException | SQLException e) {
             System.out.println("Invalid note ID!");
         }
 
+    }
+
+        private void editOwnNote(User user) throws SQLException {
+            showNotes(user);
+
+            System.out.println("Which note would you like to edit? (Enter note id): ");
+            String editOwnNote = scanner.nextLine();
+
+            try {
+                int noteId = Integer.parseInt(editOwnNote);
+
+                System.out.println("Are you sure  you want to edit this note? (y/n): ");
+                String confirmEdit = scanner.nextLine();
+
+                if(!confirmEdit.equalsIgnoreCase("y")) {
+                    System.out.println("Edit cancelled");
+                    return;
+                }
+
+                System.out.println("Enter new title: ");
+                String newTitle = scanner.nextLine();
+
+                System.out.println("Enter new content: ");
+                String newContent = scanner.nextLine();
+
+                boolean edited = noteService.editOwnNote(
+                        noteId,
+                        newTitle,
+                        newContent,
+                        user.getId()
+                );
+
+                if(edited) {
+                    System.out.println("Note updated successfully!");
+                } else {
+                    System.out.println("Note could not be edited! Make sure note ID is correct.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid note ID!");
+            } catch (SQLException e) {
+                System.out.println("Error while trying to edit note!");
+            }
+
         }
+
     }
 
