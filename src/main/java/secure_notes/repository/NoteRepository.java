@@ -63,40 +63,55 @@ public class NoteRepository {
         }
     }
 
-        public boolean editOwnNote(int noteId, int userId, String newTitle, String newContent) throws SQLException {
-            String sql = "UPDATE notes SET title=?,content=? WHERE id=? AND user_id=?";
+    public boolean editOwnNote(int noteId, int userId, String newTitle, String newContent) throws SQLException {
+        String sql = "UPDATE notes SET title=?,content=? WHERE id=? AND user_id=?";
 
-            try (Connection conn = DatabaseConnection.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-                stmt.setString(1, newTitle);
-                stmt.setString(2, newContent);
-                stmt.setInt(3, noteId);
-                stmt.setInt(4, userId);
+            stmt.setString(1, newTitle);
+            stmt.setString(2, newContent);
+            stmt.setInt(3, noteId);
+            stmt.setInt(4, userId);
 
-                return stmt.executeUpdate() > 0;
-            }
-        }
-
-        public List<Note> findAllNotes() throws SQLException {
-            List<Note> notes = new ArrayList<>();
-
-            String sql = "SELECT * FROM notes";
-            try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery()) {
-
-                while (rs.next()) {
-                    notes.add(new Note(
-                            rs.getInt("id"),
-                            rs.getString("title"),
-                            rs.getString("content"),
-                            rs.getInt("user_id")
-                    ));
-                }
-            } catch (SQLException e) {
-                System.out.println("Couldn't get all notes");
-            }
-            return notes;
+            return stmt.executeUpdate() > 0;
         }
     }
+
+    public List<Note> findAllNotes() throws SQLException {
+        List<Note> notes = new ArrayList<>();
+
+        String sql = "SELECT * FROM notes";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                notes.add(new Note(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getInt("user_id")
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println("Couldn't get all notes");
+        }
+        return notes;
+    }
+
+    public boolean deleteAnyNote(int noteId) throws SQLException {
+        String sql = "DELETE FROM notes WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, noteId);
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Couldn't delete note from database");
+            return false;
+        }
+    }
+}

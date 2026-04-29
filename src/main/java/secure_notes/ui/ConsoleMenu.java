@@ -22,7 +22,7 @@ public class ConsoleMenu {
             System.out.println("1. Create account");
             System.out.println("2. Log in");
             System.out.println("3. Exit");
-            System.out.println("4. Choose: ");
+            System.out.println("\nChoose: ");
 
             String choice = scanner.nextLine();
 

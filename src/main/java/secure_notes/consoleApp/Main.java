@@ -1,8 +1,5 @@
 package secure_notes.consoleApp;
-import secure_notes.config.DatabaseConnection;
 import secure_notes.ui.ConsoleMenu;
-
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Main {
